@@ -119,11 +119,39 @@ fn (mut sc Scanner) string_() {
 	sc.add_token1(.string_, value)
 }
 
+fn (mut sc Scanner) number() {
+	for is_digit(sc.peek()) {
+		sc.advance()
+	}
+
+	if sc.peek() == `.` && is_digit(sc.peek_next()) {
+		sc.advance()
+
+		for is_digit(sc.peek()) {
+			sc.advance()
+		}
+	}
+
+	sc.add_token1(
+		.number,
+		&PrimitiveWrapper<f64>{
+			value: sc.source[sc.start..sc.current].str().f64()
+		}
+	)
+}
+
 fn (sc &Scanner) peek() rune {
 	if sc.is_at_end() {
 		return `\0`
 	}
 	return sc.source[sc.current]
+}
+
+fn (sc &Scanner) peek_next() rune {
+	if sc.current + 1 >= sc.source.len {
+		return `0`
+	}
+	return sc.source[sc.current + 1]
 }
 
 fn (mut sc Scanner) advance() rune {
@@ -138,6 +166,10 @@ fn (mut sc Scanner) match_(expected rune) bool {
 
 	sc.current++
 	return true
+}
+
+fn is_digit(r rune) bool {
+	return r >= `0` && r <= `9`
 }
 
 fn (sc &Scanner) is_at_end() bool {
