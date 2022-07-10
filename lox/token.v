@@ -1,11 +1,23 @@
 module lox
 
+pub struct PrimitiveWrapper<T> {
+	value T
+}
+
 pub struct Token {
 pub:
 	token   TokenType
 	lexeme  string
 	literal voidptr
 	line    int
+}
+
+[unsafe]
+pub fn (t &Token) free() {
+	unsafe {
+		t.lexeme.free()
+		free(t.literal)
+	}
 }
 
 pub enum TokenType {
