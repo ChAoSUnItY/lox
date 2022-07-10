@@ -87,6 +87,12 @@ fn (mut sc Scanner) scan_token() {
 				sc.add_token(.slash)
 			}
 		}
+		` `, `\r`, `\t` {
+			// ignored
+		}
+		`\n` {
+			sc.line++
+		}
 		else {
 			sc.proc.error(sc.line, 'Unexpected character `${sc.advance()}`.')
 		}
