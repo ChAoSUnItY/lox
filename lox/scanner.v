@@ -87,6 +87,9 @@ fn (mut sc Scanner) scan_token() {
 				sc.add_token(.slash)
 			}
 		}
+		`"` {
+			sc.string_()
+		}
 		` `, `\r`, `\t` {
 			// ignored
 		}
@@ -97,6 +100,23 @@ fn (mut sc Scanner) scan_token() {
 			sc.proc.error(sc.line, 'Unexpected character `${sc.advance()}`.')
 		}
 	}
+}
+
+fn (mut sc Scanner) string_() {
+	for sc.peek() != `"` && !sc.is_at_end() {
+		if sc.peek() == `\n` {
+			sc.line++
+		}
+		sc.advance()
+	}
+
+	if sc.is_at_end() {
+		sc.proc.error(sc.line, 'Unterminated string.')
+		return
+	}
+
+	value := sc.source[sc.start + 1..sc.current - 1]
+	sc.add_token1(.string_, value)
 }
 
 fn (sc &Scanner) peek() rune {
