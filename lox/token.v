@@ -41,7 +41,7 @@ pub enum TokenType {
 	false_
 	for_
 	if_
-	nil
+	nil_
 	or_
 	print
 	return_

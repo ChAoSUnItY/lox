@@ -33,10 +33,6 @@ pub fn (mut sc Scanner) scan_tokens() []Token {
 	return sc.tokens
 }
 
-fn (sc &Scanner) is_at_end() bool {
-	return sc.current >= sc.source.len
-}
-
 fn (mut sc Scanner) scan_token() {
 	c := sc.advance()
 	match c {
@@ -70,15 +66,56 @@ fn (mut sc Scanner) scan_token() {
 		`*` {
 			sc.add_token(.star)
 		}
+		`!` {
+			sc.add_token(if sc.match_(`=`) { .bang_equal } else { .bang })
+		}
+		`=` {
+			sc.add_token(if sc.match_(`=`) { .equal_equal } else { .equal })
+		}
+		`<` {
+			sc.add_token(if sc.match_(`=`) { .less_equal } else { .less })
+		}
+		`>` {
+			sc.add_token(if sc.match_(`=`) { .greater_equal } else { .greater })
+		}
+		`/` {
+			if sc.match_(`/`) {
+				for sc.peek() != `\n` && !sc.is_at_end() {
+					sc.advance()
+				}
+			} else {
+				sc.add_token(.slash)
+			}
+		}
 		else {
 			sc.proc.error(sc.line, 'Unexpected character `${sc.advance()}`.')
 		}
 	}
 }
 
+fn (sc &Scanner) peek() rune {
+	if sc.is_at_end() {
+		return `\0`
+	}
+	return sc.source[sc.current]
+}
+
 fn (mut sc Scanner) advance() rune {
 	sc.current++
 	return sc.source[sc.current - 1]
+}
+
+fn (mut sc Scanner) match_(expected rune) bool {
+	if sc.is_at_end() || sc.source[sc.current] != expected {
+		return false
+	}
+
+	sc.current++
+	return true
+}
+
+fn (sc &Scanner) is_at_end() bool {
+	return sc.current >= sc.source.len
 }
 
 fn (mut sc Scanner) add_token(typ TokenType) {
