@@ -3,7 +3,9 @@ module lox
 import os
 import readline
 
+[heap]
 pub struct Proc {
+mut:
 	had_error bool
 }
 
@@ -27,6 +29,11 @@ pub fn (mut proc Proc) run_prompt() ? {
 fn (mut proc Proc) run(source string) {
 }
 
+pub fn (mut proc Proc) error(line int, message string) {
+	proc.report(line, '', message)
+}
+
 pub fn (mut proc Proc) report(line int, where string, message string) {
+	proc.had_error = true
 	eprintln('[line $line] Error $where: message')
 }

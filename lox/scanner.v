@@ -3,10 +3,18 @@ module lox
 pub struct Scanner {
 	source []rune
 mut:
+	proc &Proc
 	tokens []Token = []
 	start int
 	current int
 	line int = 1
+}
+
+pub fn new_scanner(proc &Proc, source []rune) Scanner {
+	return Scanner{
+		proc: proc,
+		source: source
+	}
 }
 
 pub fn (mut sc Scanner) scan_tokens() []Token {
@@ -35,8 +43,35 @@ fn (mut sc Scanner) scan_token() {
 		`(` {
 			sc.add_token(.left_paren)
 		}
+		`)` {
+			sc.add_token(.right_paren)
+		}
+		`{` {
+			sc.add_token(.left_brace)
+		}
+		`}` {
+			sc.add_token(.right_brace)
+		}
+		`,` {
+			sc.add_token(.comma)
+		}
+		`.` {
+			sc.add_token(.dot)
+		}
+		`-` {
+			sc.add_token(.minus)
+		}
+		`+` {
+			sc.add_token(.plus)
+		}
+		`;` {
+			sc.add_token(.semicolon)
+		}
+		`*` {
+			sc.add_token(.star)
+		}
 		else {
-
+			sc.proc.error(sc.line, 'Unexpected character `${sc.advance()}`.')
 		}
 	}
 }
