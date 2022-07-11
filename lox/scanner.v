@@ -176,6 +176,12 @@ fn is_digit(r rune) bool {
 	return r >= `0` && r <= `9`
 }
 
+fn is_alpha(r rune) bool {
+	return (r >= `a` && r <= `z`) ||
+		   (r >= `A` && r <= `Z`) ||
+		   r == `_`
+}
+
 fn (sc &Scanner) is_at_end() bool {
 	return sc.current >= sc.source.len
 }
