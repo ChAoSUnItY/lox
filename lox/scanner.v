@@ -3,16 +3,16 @@ module lox
 pub struct Scanner {
 	source []rune
 mut:
-	proc &Proc
-	tokens []Token = []
-	start int
+	proc    &Proc
+	tokens  []Token = []
+	start   int
 	current int
-	line int = 1
+	line    int = 1
 }
 
 pub fn new_scanner(proc &Proc, source []rune) Scanner {
 	return Scanner{
-		proc: proc,
+		proc: proc
 		source: source
 	}
 }
@@ -25,9 +25,9 @@ pub fn (mut sc Scanner) scan_tokens() []Token {
 	}
 
 	sc.tokens << Token{
-		token: .eof,
-		lexeme: "",
-		literal: voidptr(0),
+		token: .eof
+		lexeme: ''
+		literal: voidptr(0)
 		line: sc.line
 	}
 	return sc.tokens
@@ -97,7 +97,7 @@ fn (mut sc Scanner) scan_token() {
 			sc.line++
 		}
 		else {
-			sc.proc.error(sc.line, 'Unexpected character `${sc.advance()}`.')
+			sc.proc.error(sc.line, 'Unexpected character `$sc.advance()`.')
 		}
 	}
 }
@@ -134,13 +134,10 @@ fn (mut sc Scanner) number() {
 
 	unsafe {
 		mut addr := &f64(malloc(sizeof(f64)))
-		
+
 		*addr = sc.source[sc.start..sc.current].str().f64()
 
-		sc.add_token1(
-			.number,
-			addr
-		)
+		sc.add_token1(.number, addr)
 	}
 }
 
@@ -177,9 +174,7 @@ fn is_digit(r rune) bool {
 }
 
 fn is_alpha(r rune) bool {
-	return (r >= `a` && r <= `z`) ||
-		   (r >= `A` && r <= `Z`) ||
-		   r == `_`
+	return (r >= `a` && r <= `z`) || (r >= `A` && r <= `Z`) || r == `_`
 }
 
 fn (sc &Scanner) is_at_end() bool {
@@ -193,9 +188,9 @@ fn (mut sc Scanner) add_token(typ TokenType) {
 fn (mut sc Scanner) add_token1(typ TokenType, literal voidptr) {
 	text := sc.source[sc.start..sc.current]
 	sc.tokens << Token{
-		token: typ,
-		lexeme: text.str(),
-		literal: literal,
+		token: typ
+		lexeme: text.str()
+		literal: literal
 		line: sc.line
 	}
 }
