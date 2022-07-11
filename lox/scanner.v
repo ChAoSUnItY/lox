@@ -10,6 +10,27 @@ mut:
 	line    int = 1
 }
 
+const (
+	keywords = {
+		'and':    TokenType.and
+		'class':  .class
+		'else':   .else_
+		'false':  .false_
+		'for':    .for_
+		'fun':    .fun
+		'if':     .if_
+		'nil':    .nil_
+		'or':     .or_
+		'print':  .print
+		'return': .return_
+		'super':  .super
+		'this':   .this
+		'true':   .true_
+		'var':    .var
+		'while':  .while
+	}
+)
+
 pub fn new_scanner(proc &Proc, source []rune) Scanner {
 	return Scanner{
 		proc: proc
@@ -97,7 +118,13 @@ fn (mut sc Scanner) scan_token() {
 			sc.line++
 		}
 		else {
-			sc.proc.error(sc.line, 'Unexpected character `$sc.advance()`.')
+			if is_digit(sc.peek()) {
+				sc.number()
+			} else if is_alpha(sc.peek()) {
+				sc.identifier()
+			} else {
+				sc.proc.error(sc.line, 'Unexpected character `$sc.advance()`.')
+			}
 		}
 	}
 }
@@ -141,6 +168,14 @@ fn (mut sc Scanner) number() {
 	}
 }
 
+fn (mut sc Scanner) identifier() {
+	for is_alpha_numberic(sc.peek()) {
+		sc.advance()
+	}
+
+	sc.add_token(.identifier)
+}
+
 fn (sc &Scanner) peek() rune {
 	if sc.is_at_end() {
 		return `\0`
@@ -169,12 +204,19 @@ fn (mut sc Scanner) match_(expected rune) bool {
 	return true
 }
 
+[inline]
 fn is_digit(r rune) bool {
 	return r >= `0` && r <= `9`
 }
 
+[inline]
 fn is_alpha(r rune) bool {
 	return (r >= `a` && r <= `z`) || (r >= `A` && r <= `Z`) || r == `_`
+}
+
+[inline]
+fn is_alpha_numberic(r rune) bool {
+	return is_digit(r) || is_alpha(r)
 }
 
 fn (sc &Scanner) is_at_end() bool {

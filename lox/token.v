@@ -48,6 +48,7 @@ pub enum TokenType {
 	else_
 	false_
 	for_
+	fun
 	if_
 	nil_
 	or_
