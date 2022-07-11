@@ -173,7 +173,10 @@ fn (mut sc Scanner) identifier() {
 		sc.advance()
 	}
 
-	sc.add_token(.identifier)
+	text := sc.source[sc.start..sc.current]
+	typ := lox.keywords[text.str()] or { TokenType.identifier }
+
+	sc.add_token(typ)
 }
 
 fn (sc &Scanner) peek() rune {
