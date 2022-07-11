@@ -1,9 +1,5 @@
 module lox
 
-pub struct PrimitiveWrapper<T> {
-	value T
-}
-
 pub struct Token {
 pub:
 	token   TokenType

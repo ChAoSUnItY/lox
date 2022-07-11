@@ -132,12 +132,16 @@ fn (mut sc Scanner) number() {
 		}
 	}
 
-	sc.add_token1(
-		.number,
-		&PrimitiveWrapper<f64>{
-			value: sc.source[sc.start..sc.current].str().f64()
-		}
-	)
+	unsafe {
+		mut addr := &f64(malloc(sizeof(f64)))
+		
+		*addr = sc.source[sc.start..sc.current].str().f64()
+
+		sc.add_token1(
+			.number,
+			addr
+		)
+	}
 }
 
 fn (sc &Scanner) peek() rune {
