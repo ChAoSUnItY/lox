@@ -5,9 +5,9 @@ struct Expr {
 
 struct Binary {
 	Expr
-	left Expr
+	left     Expr
 	operator Token
-	right Token
+	right    Token
 }
 
 struct Grouping {
@@ -23,5 +23,5 @@ struct Literal {
 struct Unary {
 	Expr
 	operator Token
-	right Expr
+	right    Expr
 }

@@ -1,7 +1,6 @@
 /*
 ** UTILITY FUNCTION FOR AST STRUCTS GENERATION
 */
-
 import os
 
 fn main() {
@@ -17,6 +16,9 @@ fn main() {
 		'Literal	: value voidptr',
 		'Unary		: operator Token, right Expr',
 	])?
+
+	// fmt after generation
+	os.execute(@VEXE + ' fmt $output_dir -w')
 }
 
 fn define_ast(output_dir string, base_name string, types []string) ? {
